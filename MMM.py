@@ -1,10 +1,52 @@
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
-import altair as alt
-from streamlit_echarts import JsCode
-from streamlit_echarts import st_echarts
+import subprocess
+import sys
+
+# Function to install missing packages
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Try to import packages, and install them if not found
+try:
+    import streamlit as st
+except ImportError:
+    install("streamlit")
+    import streamlit as st
+
+try:
+    import pandas as pd
+except ImportError:
+    install("pandas")
+    import pandas as pd
+
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    install("matplotlib")
+    import matplotlib.pyplot as plt
+
+try:
+    from datetime import datetime
+except ImportError:
+    install("datetime")  # Note: `datetime` is built into Python, so this is just a fallback
+    from datetime import datetime
+
+try:
+    import altair as alt
+except ImportError:
+    install("altair")
+    import altair as alt
+
+try:
+    from streamlit_echarts import JsCode
+except ImportError:
+    install("streamlit-echarts")
+    from streamlit_echarts import JsCode
+
+try:
+    from streamlit_echarts import st_echarts
+except ImportError:
+    install("streamlit-echarts")
+    from streamlit_echarts import st_echarts
 
 # Set wide layout for Streamlit
 st.set_page_config(layout="wide")
