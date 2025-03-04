@@ -1,0 +1,6 @@
+streamlit
+pandas
+matplotlib
+altair
+streamlit-echarts
+pyparsing
