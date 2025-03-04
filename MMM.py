@@ -59,10 +59,7 @@ def remove_POs(df_shift_all):
     return df_filtered_good, df_filtered_bad
 
 def get_file_as_dataframe(filename):
-    try:
-        df = pd.read_excel(filename, sheet_name="End Of Shift Report")
-    except:
-        print(f"Error reading worksheet = 'End Of Shift Report' from file: {filename}")
+    df = pd.read_excel(filename, sheet_name="End Of Shift Report")
 
     df.columns = df.iloc[0, :]
     df_clean = df.iloc[1:, :]
