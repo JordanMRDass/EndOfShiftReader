@@ -4,3 +4,4 @@ matplotlib
 altair
 streamlit-echarts
 pyparsing
+openpyxl
