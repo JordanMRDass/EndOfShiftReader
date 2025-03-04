@@ -78,9 +78,6 @@ def get_file_as_dataframe(filename):
 
     return df_process
 
-df_process = get_file_as_dataframe("90 TNB_RPAAMS_End of Shift Report & Support Guide Year 4-2024-Q4.xlsx")
-
-
 def seperate_shift_df(df_process):
     df_shift1 = df_process[["Date/Month","Shift1_Process","Shift1_Issue","Shift1_Action Taken"]]
     df_shift1.columns = ["Date/Month","Process","Issue","Action Taken"]
