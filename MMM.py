@@ -211,9 +211,9 @@ if uploaded_file is not None:
         events = {"click": "function(params) {return params.name}"})
 
     if secondary_clicked_label:
-        seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]]
+        seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
         st.dataframe(seconday_clicked_process, use_container_width = True)
     else:
-        seconday_clicked_process = process_counts[(process_counts["Date/Month"] == secondary_clicked_label) & (process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]]
+        seconday_clicked_process = process_counts[(process_counts["Date/Month"] == secondary_clicked_label) & (process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
         st.dataframe(seconday_clicked_process, use_container_width = True)
 
