@@ -176,11 +176,12 @@ if uploaded_file is not None:
 
     clicked_process = process_counts[process_counts["Process"] == clicked_label][["Date/Month","Process","Issue","Action Taken"]]
 
+    st.write("____")
+
     st.write(f"{clicked_label}")
 
     process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
 
-    st.write("____")
     option = {
                 "tooltip": {
                     "trigger": 'axis',
