@@ -294,7 +294,6 @@ if uploaded_file is not None:
         st.dataframe(seconday_clicked_process, use_container_width = True)
 
     compare_month_option = get_data_for_chart(pivot_df_final)
-    st.write(compare_month_option)
     st_echarts(compare_month_option,
             height = "600px",
             events = {"click": "function(params) {return params.name}"})
