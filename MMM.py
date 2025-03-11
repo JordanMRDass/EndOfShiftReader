@@ -297,6 +297,7 @@ if uploaded_file is not None:
             st.dataframe(seconday_clicked_process, use_container_width = True)
 
     with tab2:
+        st.write("ok")
         st_echarts(compare_month_option,
                 height = "600px",
                 events = {"click": "function(params) {return params.name}"})
