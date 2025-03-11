@@ -182,7 +182,7 @@ if uploaded_file is not None:
 
     pivot_df = comparing_months_final.pivot_table(index='Process', columns='Month', values='Issue', aggfunc='sum', fill_value=0)
 
-    tab1, tab2 = st.tabs(2)
+    tab1, tab2 = st.tabs(["Month Dasboard", "Month Comparison"])
     with tab1:
         if 'Process' in df_shift_all.columns:
     
