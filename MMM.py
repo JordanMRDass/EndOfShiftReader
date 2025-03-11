@@ -53,7 +53,19 @@ st.set_page_config(layout="wide")
 
 def get_data_for_chart(pivot_df):
     series_list = []
-    color_list = ['#FF6347', '#ADD8E6', '#FFD700', '#6A5ACD', '#40E0D0', '#BA55D3']
+    color_list = [
+    '#FF6347',  # Tomato (Bright Red)
+    '#FF4500',  # OrangeRed (Vibrant Orange)
+    '#32CD32',  # LimeGreen (Bright Green)
+    '#1E90FF',  # DodgerBlue (Bright Blue)
+    '#FFD700',  # Gold (Vibrant Yellow)
+    '#D2691E',  # Chocolate (Rich Brown)
+    '#8A2BE2',  # BlueViolet (Purple)
+    '#FF1493',  # DeepPink (Hot Pink)
+    '#00FA9A',  # MediumSpringGreen (Aqua Green)
+    '#BA55D3',  # MediumOrchid (Bright Purple)
+]
+
     for col in pivot_df.columns:
         if col != 'Process' and col != 'Month':
             pivot_df[col] = pivot_df[col].astype(int)
