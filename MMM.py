@@ -126,7 +126,7 @@ def get_data_for_chart(pivot_df):
     return option
 
 def remove_POs(df_shift_all):
-    pattern = "PO#|PO #|INC #|INC#|Recieved ticket|INC00|recieved ticket"
+    pattern = "PO#|PO #|INC #|INC#|INC00|received ticket|Received ticket"
     df_filtered_bad = df_shift_all[df_shift_all['Issue'].str.contains(pattern, regex=True)]
     df_filtered_good = df_shift_all[~df_shift_all['Issue'].str.contains(pattern, regex=True)]
 
