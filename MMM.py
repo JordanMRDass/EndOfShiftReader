@@ -82,8 +82,8 @@ def get_data_for_chart(pivot_df):
                             'name': f'Month {col}',
                             'type': 'bar',
                             'data': list(pivot_df[col]),
-                            "barWidth": "40%",
-                            "barGap": "20%",
+                            "barWidth": "20%",
+                            "barGap": "40%",
                             'itemStyle': {
                                 'color': color_list[num]
                             }
