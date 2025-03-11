@@ -54,8 +54,8 @@ st.set_page_config(layout="wide")
 def get_data_for_chart(pivot_df):
     series_list = []
     color_list = [
-    '#FF6347',  # Tomato (Bright Red)
     '#FF4500',  # OrangeRed (Vibrant Orange)
+    '#FF6347',  # Tomato (Bright Red)
     '#32CD32',  # LimeGreen (Bright Green)
     '#1E90FF',  # DodgerBlue (Bright Blue)
     '#FFD700',  # Gold (Vibrant Yellow)
