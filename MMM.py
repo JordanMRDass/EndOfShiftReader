@@ -51,6 +51,56 @@ except ImportError:
 # Set wide layout for Streamlit
 st.set_page_config(layout="wide")
 
+def get_data_for_chart(pivot_df):
+    series_list = []
+    for col in pivot_df.columns:
+        if col != 'Process' and col != 'Month':
+            pivot_df[col] = pivot_df[col].astype(int)
+            data = {
+                            'name': f'Month {col}',
+                            'type': 'bar',
+                            'data': list(data.col),
+                            'barWidth': '20%',
+                            'itemStyle': {
+                                'color': '#91CC75'
+                            }
+                        }
+            
+            series_list.append(data)
+
+    legend = {
+                'data': [col for col in pivot_df.columns if col != 'Process' and col != 'Month'],
+                'top': 'bottom'
+            }
+    
+    option = {
+            'title': {
+                'text': 'Issues by Process and Month',
+                'subtext': 'Clustered Bar Chart',
+                'left': 'center'
+            },
+            'tooltip': {
+                'trigger': 'axis',
+                'axisPointer': {
+                    'type': 'shadow'
+                }
+            },
+            'legend': legend,
+            'xAxis': {
+                'type': 'value',
+                'name': 'Issue Count',
+                'nameLocation': 'middle'
+            },
+            'yAxis': {
+                'type': 'category',
+                'data': pivot_df.Process,
+                'name': 'Process'
+            },
+            'series': series_list
+        }
+    
+    return option
+
 def remove_POs(df_shift_all):
     pattern = "PO#|PO #|INC #|INC#"
     df_filtered_bad = df_shift_all[df_shift_all['Issue'].str.contains(pattern, regex=True)]
@@ -109,6 +159,14 @@ if uploaded_file is not None:
 
     st.write(f"Removed {len(df_shift_all_bad)} Tickets from calculations, remaining: {len(df_shift_all)} issues")
     st.dataframe(df_shift_all_bad)
+
+    df_shift_all["Date/Month"] = pd.to_datetime(df_shift_all["Date/Month"], errors='coerce')
+    df_shift_all["Month"] = df_shift_all["Date/Month"].dt.month
+    
+    comparing_months = df_shift_all.groupby(["Month", "Process"]).count()
+    comparing_months_final = comparing_months.reset_index()[["Month", "Process", "Issue"]]
+
+    pivot_df = comparing_months_final.pivot_table(index='Process', columns='Month', values='Issue', aggfunc='sum', fill_value=0)
 
     if 'Process' in df_shift_all.columns:
 
@@ -218,4 +276,11 @@ if uploaded_file is not None:
     else:
         seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
         st.dataframe(seconday_clicked_process, use_container_width = True)
+    
+    pivot_df_final = pivot_df.reset_index()
+    compare_month_option = get_data_for_chart(pivot_df_final)
+
+    st_echarts(compare_month_option,
+            height = "300px",
+            events = {"click": "function(params) {return params.name}"})
 
