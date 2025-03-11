@@ -305,6 +305,6 @@ if uploaded_file is not None:
 
     compare_month_option = get_data_for_chart(pivot_df_final)
     st_echarts(compare_month_option,
-            height = "600px",
+            height = "1200px",
             events = {"click": "function(params) {return params.name}"})
 
