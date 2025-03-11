@@ -180,6 +180,7 @@ if uploaded_file is not None:
 
     process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
 
+    st.write("____")
     option = {
                 "tooltip": {
                     "trigger": 'axis',
@@ -205,7 +206,7 @@ if uploaded_file is not None:
         ]
     }
 
-
+    
     secondary_clicked_label = st_echarts(option,
         height = "300px",
         events = {"click": "function(params) {return params.name}"})
