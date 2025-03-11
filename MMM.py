@@ -64,6 +64,16 @@ def get_data_for_chart(pivot_df):
     '#FF1493',  # DeepPink (Hot Pink)
     '#00FA9A',  # MediumSpringGreen (Aqua Green)
     '#BA55D3',  # MediumOrchid (Bright Purple)
+    '#FF4500',  # OrangeRed (Vibrant Orange)
+    '#FF6347',  # Tomato (Bright Red)
+    '#32CD32',  # LimeGreen (Bright Green)
+    '#1E90FF',  # DodgerBlue (Bright Blue)
+    '#FFD700',  # Gold (Vibrant Yellow)
+    '#D2691E',  # Chocolate (Rich Brown)
+    '#8A2BE2',  # BlueViolet (Purple)
+    '#FF1493',  # DeepPink (Hot Pink)
+    '#00FA9A',  # MediumSpringGreen (Aqua Green)
+    '#BA55D3'  # MediumOrchid (Bright Purple)
 ]
 
     for col in pivot_df.columns:
