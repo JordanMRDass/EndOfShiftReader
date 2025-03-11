@@ -184,118 +184,115 @@ if uploaded_file is not None:
 
     pivot_df_final = pivot_df.reset_index()
 
-    tab1, tab2 = st.tabs(["Month Dasboard", "Month Comparison"])
-    with tab1:
-        if 'Process' in df_shift_all.columns:
-    
-            start_date, end_date = st.date_input(
-                "Choose a date range", 
-                [df_shift_all["Date/Month"].min(), df_shift_all["Date/Month"].max()],
-                min_value = df_shift_all["Date/Month"].min(),
-                max_value= df_shift_all["Date/Month"].max()
-            )
-    
-            col1, col2 = st.columns([0.5, 1.5])
-    
-            start_date_str = start_date.strftime("%Y-%m-%d")  # Correct format string
-            end_date_str = end_date.strftime("%Y-%m-%d")
-    
-            process_counts = df_shift_all[(df_shift_all["Date/Month"] >= pd.to_datetime(start_date)) & 
-        (df_shift_all["Date/Month"] <= pd.to_datetime(end_date))]
-    
-            process_counts_to_display = process_counts.groupby(by=["Process"]).size().reset_index(name='ProcessCount')
-    
-            # Display the counts in the app
-            with col1:
-                st.write("Count of each unique Process:")
-                st.dataframe(process_counts_to_display[["Process", "ProcessCount"]], use_container_width=True)  # Display the DataFrame with renamed columns
-                total_issues = sum(list(process_counts_to_display["ProcessCount"]))
-                st.write(f"Total Issues: {total_issues}")
-            # Plot the count of 'Process' values as a bar chart
-            with col2: 
-                st.write(f"Visualizing the count of each Process, {start_date_str} - {end_date_str}:")
-    
-                option = {
+    if 'Process' in df_shift_all.columns:
+
+        start_date, end_date = st.date_input(
+            "Choose a date range", 
+            [df_shift_all["Date/Month"].min(), df_shift_all["Date/Month"].max()],
+            min_value = df_shift_all["Date/Month"].min(),
+            max_value= df_shift_all["Date/Month"].max()
+        )
+
+        col1, col2 = st.columns([0.5, 1.5])
+
+        start_date_str = start_date.strftime("%Y-%m-%d")  # Correct format string
+        end_date_str = end_date.strftime("%Y-%m-%d")
+
+        process_counts = df_shift_all[(df_shift_all["Date/Month"] >= pd.to_datetime(start_date)) & 
+    (df_shift_all["Date/Month"] <= pd.to_datetime(end_date))]
+
+        process_counts_to_display = process_counts.groupby(by=["Process"]).size().reset_index(name='ProcessCount')
+
+        # Display the counts in the app
+        with col1:
+            st.write("Count of each unique Process:")
+            st.dataframe(process_counts_to_display[["Process", "ProcessCount"]], use_container_width=True)  # Display the DataFrame with renamed columns
+            total_issues = sum(list(process_counts_to_display["ProcessCount"]))
+            st.write(f"Total Issues: {total_issues}")
+        # Plot the count of 'Process' values as a bar chart
+        with col2: 
+            st.write(f"Visualizing the count of each Process, {start_date_str} - {end_date_str}:")
+
+            option = {
+            "tooltip": {
+                "trigger": 'axis',
+                "axisPointer": {      
+                "type": 'shadow'      
+                }
+            },
+            "xAxis": {
+                "type": 'category',
+                "data": list(process_counts_to_display.Process),
+                "axisLabel": {
+                "rotate": 90 
+                }
+            },
+            "yAxis": {
+                "type": 'value'
+            },
+            "series": [
+                {
+                "data": list(process_counts_to_display.ProcessCount),
+                "type": 'bar',
+                'itemStyle': {
+                'color': 'red'  # Set the color of the line to red
+            }
+                }
+            ]}
+
+            
+            clicked_label = st_echarts(option,
+            height = "500px",
+            events = {"click": "function(params) {return params.name}"})
+
+    else:
+        st.error("'Process' column not found in the uploaded data")
+
+    clicked_process = process_counts[process_counts["Process"] == clicked_label][["Date/Month","Process","Issue","Action Taken"]]
+
+    st.write("____")
+
+    st.write(f"{clicked_label}")
+
+    process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
+
+    option = {
                 "tooltip": {
                     "trigger": 'axis',
                     "axisPointer": {      
                     "type": 'shadow'      
                     }
                 },
-                "xAxis": {
-                    "type": 'category',
-                    "data": list(process_counts_to_display.Process),
-                    "axisLabel": {
-                    "rotate": 90 
-                    }
-                },
-                "yAxis": {
-                    "type": 'value'
-                },
-                "series": [
-                    {
-                    "data": list(process_counts_to_display.ProcessCount),
-                    "type": 'bar',
-                    'itemStyle': {
-                    'color': 'red'  # Set the color of the line to red
-                }
-                    }
-                ]}
-    
-                
-                clicked_label = st_echarts(option,
-                height = "500px",
-                events = {"click": "function(params) {return params.name}"})
-    
-        else:
-            st.error("'Process' column not found in the uploaded data")
-    
-        clicked_process = process_counts[process_counts["Process"] == clicked_label][["Date/Month","Process","Issue","Action Taken"]]
-    
-        st.write("____")
-    
-        st.write(f"{clicked_label}")
-    
-        process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
-    
-        option = {
-                    "tooltip": {
-                        "trigger": 'axis',
-                        "axisPointer": {      
-                        "type": 'shadow'      
-                        }
-                    },
-            'xAxis': {
-                'type': 'category',
-                'data': list(process_counts_to_display["Date/Month"].dt.strftime('%Y-%m-%dT%H:%M:%S'))
-            },
-            'yAxis': {
-                'type': 'value'
-            },
-            'series': [
-                {
-                    'data': list(process_counts_to_display["ProcessCount"]),
-                    'type': 'line',
-                    'itemStyle': {
-                    'color': 'red'  # Set the color of the line to red
-                }
-                }
-            ]
-        }
-    
-        
-        secondary_clicked_label = st_echarts(option,
-            height = "300px",
-            events = {"click": "function(params) {return params.name}"})
-    
-        if secondary_clicked_label != None:
-            seconday_clicked_process = process_counts[(process_counts["Date/Month"] == secondary_clicked_label) & (process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
-            st.dataframe(seconday_clicked_process, use_container_width = True)
-        else:
-            seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
-            st.dataframe(seconday_clicked_process, use_container_width = True)
+        'xAxis': {
+            'type': 'category',
+            'data': list(process_counts_to_display["Date/Month"].dt.strftime('%Y-%m-%dT%H:%M:%S'))
+        },
+        'yAxis': {
+            'type': 'value'
+        },
+        'series': [
+            {
+                'data': list(process_counts_to_display["ProcessCount"]),
+                'type': 'line',
+                'itemStyle': {
+                'color': 'red'  # Set the color of the line to red
+            }
+            }
+        ]
+    }
 
-    #with tab2:
+    
+    secondary_clicked_label = st_echarts(option,
+        height = "300px",
+        events = {"click": "function(params) {return params.name}"})
+
+    if secondary_clicked_label != None:
+        seconday_clicked_process = process_counts[(process_counts["Date/Month"] == secondary_clicked_label) & (process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
+        st.dataframe(seconday_clicked_process, use_container_width = True)
+    else:
+        seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
+        st.dataframe(seconday_clicked_process, use_container_width = True)
+
     compare_month_option = get_data_for_chart(pivot_df_final)
     st.write(compare_month_option)
     st_echarts(compare_month_option,
