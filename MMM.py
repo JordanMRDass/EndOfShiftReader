@@ -95,7 +95,8 @@ def get_data_for_chart(pivot_df):
             'yAxis': {
                 'type': 'category',
                 'data': list(pivot_df["Process"]),
-                'name': 'Process'
+                'name': 'Process',
+                'interval': 2
             },
             'series': series_list
         }
