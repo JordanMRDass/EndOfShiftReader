@@ -133,7 +133,8 @@ if uploaded_file is not None:
         with col1:
             st.write("Count of each unique Process:")
             st.dataframe(process_counts_to_display[["Process", "ProcessCount"]], use_container_width=True)  # Display the DataFrame with renamed columns
-
+            total_issues = sum(list(process_counts_to_display["ProcessCount"]))
+            st.write(f"Total Issues: {total_issues}")
         # Plot the count of 'Process' values as a bar chart
         with col2: 
             st.write(f"Visualizing the count of each Process, {start_date_str} - {end_date_str}:")
