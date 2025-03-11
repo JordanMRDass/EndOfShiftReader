@@ -182,6 +182,9 @@ if uploaded_file is not None:
 
     pivot_df = comparing_months_final.pivot_table(index='Process', columns='Month', values='Issue', aggfunc='sum', fill_value=0)
 
+    pivot_df_final = pivot_df.reset_index()
+    compare_month_option = get_data_for_chart(pivot_df_final)
+
     tab1, tab2 = st.tabs(["Month Dasboard", "Month Comparison"])
     with tab1:
         if 'Process' in df_shift_all.columns:
@@ -294,9 +297,6 @@ if uploaded_file is not None:
             st.dataframe(seconday_clicked_process, use_container_width = True)
 
     with tab2:
-        pivot_df_final = pivot_df.reset_index()
-        compare_month_option = get_data_for_chart(pivot_df_final)
-    
         st_echarts(compare_month_option,
                 height = "600px",
                 events = {"click": "function(params) {return params.name}"})
