@@ -184,7 +184,7 @@ if uploaded_file is not None:
     st.dataframe(df_shift_all_bad)
 
     df_shift_all["Date/Month"] = pd.to_datetime(df_shift_all["Date/Month"], errors='coerce')
-    df_filtered["Month-Year"] = df_filtered["Date/Month"].dt.strftime('%Y-%m')
+    df_shift_all["Month-Year"] = df_shift_all["Date/Month"].dt.strftime('%Y-%m')
     
     comparing_months = df_shift_all.groupby(["Month-Year", "Process"]).count()
     comparing_months_final = comparing_months.reset_index()[["Month-Year", "Process", "Issue"]]
