@@ -56,17 +56,17 @@ def get_data_for_chart(pivot_df):
     for col in pivot_df.columns:
         if col != 'Process' and col != 'Month':
             pivot_df[col] = pivot_df[col].astype(int)
-            data = {
+            dict = {
                             'name': f'Month {col}',
                             'type': 'bar',
-                            'data': list(data.col),
+                            'data': list(pivot_df[col]),
                             'barWidth': '20%',
                             'itemStyle': {
                                 'color': '#91CC75'
                             }
                         }
             
-            series_list.append(data)
+            series_list.append(dict)
 
     legend = {
                 'data': [col for col in pivot_df.columns if col != 'Process' and col != 'Month'],
