@@ -279,6 +279,7 @@ if uploaded_file is not None:
     
     pivot_df_final = pivot_df.reset_index()
     compare_month_option = get_data_for_chart(pivot_df_final)
+    st.write(compare_month_option)
 
     st_echarts(compare_month_option,
             height = "300px",
