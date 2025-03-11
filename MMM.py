@@ -53,6 +53,7 @@ st.set_page_config(layout="wide")
 
 def get_data_for_chart(pivot_df):
     series_list = []
+    color_list = ['#FF6347', '#ADD8E6', '#FFD700', '#6A5ACD', '#40E0D0', '#BA55D3']
     for col in pivot_df.columns:
         if col != 'Process' and col != 'Month':
             pivot_df[col] = pivot_df[col].astype(int)
@@ -60,9 +61,9 @@ def get_data_for_chart(pivot_df):
                             'name': f'Month {col}',
                             'type': 'bar',
                             'data': list(pivot_df[col]),
-                            'barWidth': '20%',
+                            'barWidth': '50%',
                             'itemStyle': {
-                                'color': '#91CC75'
+                                'color': color_list[col]
                             }
                         }
             
@@ -281,6 +282,6 @@ if uploaded_file is not None:
     compare_month_option = get_data_for_chart(pivot_df_final)
 
     st_echarts(compare_month_option,
-            height = "300px",
+            height = "600px",
             events = {"click": "function(params) {return params.name}"})
 
