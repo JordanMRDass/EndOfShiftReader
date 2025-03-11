@@ -76,16 +76,15 @@ def get_data_for_chart(pivot_df):
     '#BA55D3'  # MediumOrchid (Bright Purple)
 ]
 
-    for col in pivot_df.columns:
+    for num, col in enumerate(pivot_df.columns):
         if col != 'Process' and col != 'Month':
-            pivot_df[col] = pivot_df[col].astype(int)
             dict = {
                             'name': f'Month {col}',
                             'type': 'bar',
                             'data': list(pivot_df[col]),
                             'barWidth': '50%',
                             'itemStyle': {
-                                'color': color_list[col]
+                                'color': color_list[num]
                             }
                         }
             
@@ -185,12 +184,12 @@ if uploaded_file is not None:
     st.dataframe(df_shift_all_bad)
 
     df_shift_all["Date/Month"] = pd.to_datetime(df_shift_all["Date/Month"], errors='coerce')
-    df_shift_all["Month"] = df_shift_all["Date/Month"].dt.month
+    df_filtered["Month-Year"] = df_filtered["Date/Month"].dt.strftime('%Y-%m')
     
-    comparing_months = df_shift_all.groupby(["Month", "Process"]).count()
-    comparing_months_final = comparing_months.reset_index()[["Month", "Process", "Issue"]]
+    comparing_months = df_shift_all.groupby(["Month-Year", "Process"]).count()
+    comparing_months_final = comparing_months.reset_index()[["Month-Year", "Process", "Issue"]]
 
-    pivot_df = comparing_months_final.pivot_table(index='Process', columns='Month', values='Issue', aggfunc='sum', fill_value=0)
+    pivot_df = comparing_months_final.pivot_table(index='Process', columns="Month-Year", values='Issue', aggfunc='sum', fill_value=0)
 
     pivot_df_final = pivot_df.reset_index()
 
