@@ -96,7 +96,7 @@ def get_data_for_chart(pivot_df):
                 'type': 'category',
                 'data': list(pivot_df["Process"]),
                 'name': 'Process',
-                'interval': 2
+                'interval': 5
             },
             'series': series_list
         }
