@@ -48,6 +48,9 @@ except ImportError:
     install("streamlit-echarts")
     from streamlit_echarts import st_echarts
 
+import plotly.express as px
+
+
 # Set wide layout for Streamlit
 st.set_page_config(layout="wide")
 
@@ -100,7 +103,10 @@ def get_data_for_chart(pivot_df):
             'title': {
                 'text': 'Issues by Process and Month',
                 'subtext': 'Clustered Bar Chart',
-                'left': 'center'
+                'left': 'center',
+                'textStyle': {
+                    'color': 'white'
+                }
             },
             'tooltip': {
                 'trigger': 'axis',
@@ -182,7 +188,7 @@ if uploaded_file is not None:
     df_shift1, df_shift2, df_shift3, df_shift_all, df_shift_all_bad = seperate_shift_df(process_df)
 
     st.write(f"Removed {len(df_shift_all_bad)} Tickets from calculations, remaining: {len(df_shift_all)} issues")
-    st.dataframe(df_shift_all_bad)
+    st.dataframe(df_shift_all_bad, use_container_width=True)
 
     df_shift_all["Date/Month"] = pd.to_datetime(df_shift_all["Date/Month"], errors='coerce')
     df_shift_all["Month-Year"] = df_shift_all["Date/Month"].dt.strftime('%Y-%m')
@@ -303,8 +309,38 @@ if uploaded_file is not None:
         seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
         st.dataframe(seconday_clicked_process, use_container_width = True)
 
-    compare_month_option = get_data_for_chart(pivot_df_final)
-    st_echarts(compare_month_option,
-            height = "1200px",
-            events = {"click": "function(params) {return params.name}"})
+    compare_month_col, compare_month_col2 = st.columns([1.5, 1])
+
+    with compare_month_col:
+        compare_month_option = get_data_for_chart(pivot_df_final)
+        st_echarts(compare_month_option,
+                height = "1200px",
+                events = {"click": "function(params) {return params.name}"})
+        
+    with compare_month_col2:
+        process_counts_pivot = process_counts.groupby(by = ["Process"]).size().reset_index(name='ProcessCount')
+
+        fig = px.pie(
+            process_counts_pivot, 
+            names="Process", 
+            values="ProcessCount", 
+            title="Process Issues", 
+            color_discrete_sequence=px.colors.qualitative.Set3,  # Use a predefined color set
+            hover_data={"ProcessCount": True}  # Show values on hover
+        )
+
+        # Set dark theme for Streamlit background
+        fig.update_layout(
+            paper_bgcolor="#0E1117",  # Dark background for Streamlit
+            font=dict(color="white"),  # Set text color to white
+            width=900,  # Set width
+            height=700,  # Set height
+            title_x=0.5  # Center the title
+        )
+
+        # Display the chart in Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
+        
+    
 
