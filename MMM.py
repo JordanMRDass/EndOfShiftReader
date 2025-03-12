@@ -105,7 +105,8 @@ def get_data_for_chart(pivot_df):
                 'subtext': 'Clustered Bar Chart',
                 'left': 'center',
                 'textStyle': {
-                    'color': 'white'
+                    'color': 'white',
+                    'fontSize': 20
                 }
             },
             'tooltip': {
