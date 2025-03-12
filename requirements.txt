@@ -5,3 +5,4 @@ altair
 streamlit-echarts
 pyparsing
 openpyxl
+plotly
