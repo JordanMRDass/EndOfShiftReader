@@ -210,7 +210,7 @@ if uploaded_file is not None:
         # Rename columns
         df_shift_all_bad.rename(columns={"Issue": "Count of Tickets"}, inplace=True)
 
-        groupby_month = df_shift_all_bad[["Month - Year", "Process", "Count of Tickets"]].groupby(by = ["Month - Year", "Process"]).count().reset_index()
+        groupby_month = df_shift_all_bad[["Month - Year", "Process", "Count of Tickets"]].groupby(by = ["Month - Year", "Process"]).count().reset_index().set_index("Month - Year")
 
         # Display the DataFrame grouping by the new 'Month' column and the 'Process' column
         st.dataframe(groupby_month, use_container_width=True)
