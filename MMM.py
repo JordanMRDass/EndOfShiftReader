@@ -54,6 +54,8 @@ import plotly.express as px
 # Set wide layout for Streamlit
 st.set_page_config(layout="wide")
 
+
+
 def get_data_for_chart(pivot_df):
     series_list = []
     color_list = [
@@ -191,7 +193,30 @@ if uploaded_file is not None:
     df_shift1, df_shift2, df_shift3, df_shift_all, df_shift_all_bad = seperate_shift_df(process_df)
 
     st.write(f"Removed {len(df_shift_all_bad)} Tickets from calculations, remaining: {len(df_shift_all)} issues")
-    st.dataframe(df_shift_all_bad, use_container_width=True)
+
+    # Columns for tickets
+    ticket_col1, ticket_col2, ticket_col3 = st.columns([2, 1, 2])
+
+    with ticket_col1:
+        st.dataframe(df_shift_all_bad, use_container_width=True)
+
+    with ticket_col2:
+        # Change Date/Month column to datetime format
+        df_shift_all_bad["Date/Month"] = pd.to_datetime(df_shift_all_bad["Date/Month"], errors='coerce')
+
+        # Create a new column 'Month' with the month number
+        df_shift_all_bad["Month - Year"] = df_shift_all_bad["Date/Month"].dt.month.astype(str) + "-" + df_shift_all_bad["Date/Month"].dt.year.astype(str)
+
+        # Rename columns
+        df_shift_all_bad.rename(columns={"Issue": "Count of Tickets"}, inplace=True)
+
+        groupby_month = df_shift_all_bad[["Month - Year", "Process", "Count of Tickets"]].groupby(by = ["Month - Year", "Process"]).count().reset_index()
+
+        # Display the DataFrame grouping by the new 'Month' column and the 'Process' column
+        st.dataframe(groupby_month, use_container_width=True)
+
+    with ticket_col3:
+        st.bar_chart(groupby_month, x="Process", y="Count of Tickets", color="Month - Year", height = 500)
 
     df_shift_all["Date/Month"] = pd.to_datetime(df_shift_all["Date/Month"], errors='coerce')
     df_shift_all["Month-Year"] = df_shift_all["Date/Month"].dt.strftime('%Y-%m')
