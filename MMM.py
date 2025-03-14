@@ -270,7 +270,7 @@ if uploaded_file is not None:
     if clicked_label != None:
         clicked_process = process_counts[process_counts["Process"] == clicked_label][["Date/Month","Process","Issue","Action Taken"]]
     else:
-        clicked_process = process_counts[process_counts["Process"]][["Date/Month","Process","Issue","Action Taken"]]
+        clicked_process = process_counts[["Date/Month","Process","Issue","Action Taken"]]
 
     st.write("____")
 
