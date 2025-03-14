@@ -275,18 +275,27 @@ if uploaded_file is not None:
 
     process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
 
-    # Generate a date range from the earliest to the latest date
-    date_range = pd.date_range(start=process_counts_to_display['Date/Month'].min(), 
-                            end=process_counts_to_display['Date/Month'].max(), 
-                            freq='D')
-
-    # Create a DataFrame from the date range
-    all_dates = pd.DataFrame(date_range, columns=['Date/Month'])
-
-    # Merge the date range DataFrame with the original process_counts_to_display DataFrame
-    result = pd.merge(all_dates, process_counts_to_display, on='Date/Month', how='left')
-
-    # Replace NaN in 'ProcessCount' with 0
+    # Get the start and end date of each month in 'Date/Month'
+    start_of_month = clicked_process['Date/Month'].dt.to_period('M').dt.start_time
+    end_of_month = clicked_process['Date/Month'].dt.to_period('M').dt.end_time
+    
+    # Generate a list of all the unique months in the data
+    months = pd.date_range(start=start_of_month.min(), end=end_of_month.max(), freq='M')
+    
+    # Create an empty DataFrame to hold all date ranges for the months
+    all_month_dates = pd.DataFrame()
+    
+    # For each month, create a date range from the start to the end of the month
+    for month in months:
+        month_start = month.replace(day=1)
+        month_end = month.replace(day=pd.Timestamp(month).days_in_month)
+        month_range = pd.date_range(month_start, month_end, freq='D')
+        all_month_dates = pd.concat([all_month_dates, pd.DataFrame(month_range, columns=['Date/Month'])], ignore_index=True)
+    
+    # Merge with the original counts DataFrame
+    result = pd.merge(all_month_dates, process_counts_to_display, on='Date/Month', how='left')
+    
+    # Fill NaN values in 'ProcessCount' with 0
     result['ProcessCount'].fillna(0, inplace=True)
 
     option = {
