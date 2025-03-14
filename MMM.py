@@ -275,6 +275,20 @@ if uploaded_file is not None:
 
     process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
 
+    # Generate a date range from the earliest to the latest date
+    date_range = pd.date_range(start=process_counts_to_display['Date/Month'].min(), 
+                            end=process_counts_to_display['Date/Month'].max(), 
+                            freq='D')
+
+    # Create a DataFrame from the date range
+    all_dates = pd.DataFrame(date_range, columns=['Date/Month'])
+
+    # Merge the date range DataFrame with the original process_counts_to_display DataFrame
+    result = pd.merge(all_dates, process_counts_to_display, on='Date/Month', how='left')
+
+    # Replace NaN in 'ProcessCount' with 0
+    result['ProcessCount'].fillna(0, inplace=True)
+
     option = {
                 "tooltip": {
                     "trigger": 'axis',
@@ -284,14 +298,14 @@ if uploaded_file is not None:
                 },
         'xAxis': {
             'type': 'category',
-            'data': list(process_counts_to_display["Date/Month"].dt.strftime('%Y-%m-%dT%H:%M:%S'))
+            'data': list(result["Date/Month"].dt.strftime('%Y-%m-%dT%H:%M:%S'))
         },
         'yAxis': {
             'type': 'value'
         },
         'series': [
             {
-                'data': list(process_counts_to_display["ProcessCount"]),
+                'data': list(result["ProcessCount"]),
                 'type': 'line',
                 'itemStyle': {
                 'color': 'red'  # Set the color of the line to red
