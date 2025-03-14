@@ -143,9 +143,7 @@ def get_file_as_dataframe(filename):
     df = pd.read_excel(filename, sheet_name="End Of Shift Report")
 
     df.columns = df.iloc[0, :]
-    df_clean = df.iloc[1:, :]
-
-    df_process = df_clean.dropna(subset = ["Process"])
+    df_process = df.iloc[1:, :]
 
     # Set Date/Month with previous information
     df_process["Date/Month"] = df_process["Date/Month"].fillna(method='ffill')
@@ -158,19 +156,23 @@ def get_file_as_dataframe(filename):
 
 def seperate_shift_df(df_process):
     df_shift1 = df_process[["Date/Month","Shift1_Process","Shift1_Issue","Shift1_Action Taken"]]
+    df_shift1 = df_shift1.dropna(subset = ["Shift1_Process"])
     df_shift1.columns = ["Date/Month","Process","Issue","Action Taken"]
     df_shift1["Date/Month"] = pd.to_datetime(df_shift1["Date/Month"])
 
     df_shift2 = df_process[["Date/Month","Shift2_Process","Shift2_Issue","Shift2_Action Taken"]]
+    df_shift2 = df_shift2.dropna(subset = ["Shift2_Process"])
     df_shift2.columns = ["Date/Month","Process","Issue","Action Taken"]
     df_shift2["Date/Month"] = pd.to_datetime(df_shift2["Date/Month"])
 
     df_shift3 = df_process[["Date/Month","Shift3_Process","Shift3_Issue","Shift3_Action Taken"]]
+    df_shift3 = df_shift3.dropna(subset = ["Shift3_Process"])
     df_shift3.columns = ["Date/Month","Process","Issue","Action Taken"]
     df_shift3["Date/Month"] = pd.to_datetime(df_shift3["Date/Month"])
 
     df_shift_all = pd.concat([df_shift1, df_shift2, df_shift3], axis = 0)
     df_shift_all["Date/Month"] = pd.to_datetime(df_shift_all["Date/Month"])
+    df_shift_all = df_shift_all.dropna()
     df_shift_all_good, df_shift_all_bad = remove_POs(df_shift_all)
 
     return df_shift1, df_shift2, df_shift3, df_shift_all_good, df_shift_all_bad
