@@ -269,74 +269,72 @@ if uploaded_file is not None:
 
     if clicked_label != None:
         clicked_process = process_counts[process_counts["Process"] == clicked_label][["Date/Month","Process","Issue","Action Taken"]]
-    else:
-        clicked_process = process_counts[["Date/Month","Process","Issue","Action Taken"]]
-
-    st.write("____")
-
-    st.write(f"{clicked_label}")
-
-    process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
-
-    # Get the start and end date of each month in 'Date/Month'
-    start_of_month = clicked_process['Date/Month'].dt.to_period('M').dt.start_time
-    end_of_month = clicked_process['Date/Month'].dt.to_period('M').dt.end_time
     
-    # Generate a list of all the unique months in the data
-    months = pd.date_range(start=start_of_month.min(), end=end_of_month.max(), freq='M')
+        st.write("____")
     
-    # Create an empty DataFrame to hold all date ranges for the months
-    all_month_dates = pd.DataFrame()
+        st.write(f"{clicked_label}")
     
-    # For each month, create a date range from the start to the end of the month
-    for month in months:
-        month_start = month.replace(day=1)
-        month_end = month.replace(day=pd.Timestamp(month).days_in_month)
-        month_range = pd.date_range(month_start, month_end, freq='D')
-        all_month_dates = pd.concat([all_month_dates, pd.DataFrame(month_range, columns=['Date/Month'])], ignore_index=True)
+        process_counts_to_display = clicked_process[["Date/Month"]].groupby(by=["Date/Month"]).size().reset_index(name='ProcessCount')
     
-    # Merge with the original counts DataFrame
-    result = pd.merge(all_month_dates, process_counts_to_display, on='Date/Month', how='left')
+        # Get the start and end date of each month in 'Date/Month'
+        start_of_month = clicked_process['Date/Month'].dt.to_period('M').dt.start_time
+        end_of_month = clicked_process['Date/Month'].dt.to_period('M').dt.end_time
+        
+        # Generate a list of all the unique months in the data
+        months = pd.date_range(start=start_of_month.min(), end=end_of_month.max(), freq='M')
+        
+        # Create an empty DataFrame to hold all date ranges for the months
+        all_month_dates = pd.DataFrame()
+        
+        # For each month, create a date range from the start to the end of the month
+        for month in months:
+            month_start = month.replace(day=1)
+            month_end = month.replace(day=pd.Timestamp(month).days_in_month)
+            month_range = pd.date_range(month_start, month_end, freq='D')
+            all_month_dates = pd.concat([all_month_dates, pd.DataFrame(month_range, columns=['Date/Month'])], ignore_index=True)
+        
+        # Merge with the original counts DataFrame
+        result = pd.merge(all_month_dates, process_counts_to_display, on='Date/Month', how='left')
+        
+        # Fill NaN values in 'ProcessCount' with 0
+        result['ProcessCount'].fillna(0, inplace=True)
     
-    # Fill NaN values in 'ProcessCount' with 0
-    result['ProcessCount'].fillna(0, inplace=True)
-
-    option = {
-                "tooltip": {
-                    "trigger": 'axis',
-                    "axisPointer": {      
-                    "type": 'shadow'      
-                    }
-                },
-        'xAxis': {
-            'type': 'category',
-            'data': list(result["Date/Month"].dt.strftime('%Y-%m-%dT%H:%M:%S'))
-        },
-        'yAxis': {
-            'type': 'value'
-        },
-        'series': [
-            {
-                'data': list(result["ProcessCount"]),
-                'type': 'line',
-                'itemStyle': {
-                'color': 'red'  # Set the color of the line to red
-            }
-            }
-        ]
-    }
-
+        option = {
+                    "tooltip": {
+                        "trigger": 'axis',
+                        "axisPointer": {      
+                        "type": 'shadow'      
+                        }
+                    },
+            'xAxis': {
+                'type': 'category',
+                'data': list(result["Date/Month"].dt.strftime('%Y-%m-%dT%H:%M:%S'))
+            },
+            'yAxis': {
+                'type': 'value'
+            },
+            'series': [
+                {
+                    'data': list(result["ProcessCount"]),
+                    'type': 'line',
+                    'itemStyle': {
+                    'color': 'red'  # Set the color of the line to red
+                }
+                }
+            ]
+        }
     
-    secondary_clicked_label = st_echarts(option,
-        height = "300px",
-        events = {"click": "function(params) {return params.name}"})
-
-    if secondary_clicked_label != None:
-        seconday_clicked_process = process_counts[(process_counts["Date/Month"] == secondary_clicked_label) & (process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
-        st.dataframe(seconday_clicked_process, use_container_width = True)
-    else:
-        seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
-        st.dataframe(seconday_clicked_process, use_container_width = True)
+        
+        secondary_clicked_label = st_echarts(option,
+            height = "300px",
+            events = {"click": "function(params) {return params.name}"})
+    
+        if secondary_clicked_label != None:
+            seconday_clicked_process = process_counts[(process_counts["Date/Month"] == secondary_clicked_label) & (process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
+            st.dataframe(seconday_clicked_process, use_container_width = True)
+        else:
+            seconday_clicked_process = process_counts[(process_counts["Process"] == clicked_label)][["Date/Month","Process","Issue","Action Taken"]].sort_values(by = "Date/Month")
+            st.dataframe(seconday_clicked_process, use_container_width = True)
 
     compare_month_col, compare_month_col2 = st.columns([1.5, 1])
 
